@@ -33,27 +33,28 @@ Public Class Form1
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Dim port As Integer = 0
         Dim COMmenuitem As ToolStripMenuItem = MenuStrip1.Items.Item(1)
-        ' go thru COM ports adding them to the list of available ports
-        For port = 0 To 20
-            'Console.WriteLine("form1 load")
-            SerialPort1.PortName = "COM" + port.ToString()
+        Dim ports() As String = SerialPort1.GetPortNames()
+        TextBox1.AppendText("The following serial ports were found:" + vbNewLine + "  ")
+
+        ' Display each port name to the console.
+        For Each port1 As String In ports 'foreach(String port In ports)
             Try
-                SerialPort1.Open()                                                          ' attempt to open serial port
-                TextBox1.AppendText("Found " + SerialPort1.PortName + vbNewLine)
-                Console.WriteLine("serial port open OK {0}", SerialPort1.PortName)
-                SerialPort1.Close()                                                         ' open OK, close it
-                Dim item As ToolStripMenuItem = New ToolStripMenuItem(SerialPort1.PortName) ' create a new menu item
+                TextBox1.AppendText("  " + port1)
+                Dim item As ToolStripMenuItem = New ToolStripMenuItem(port1) ' create a new menu item
                 AddHandler item.Click, AddressOf Me.COMToolStripMenuItem_Click              ' add event handler
                 COMmenuitem.DropDownItems.Add(item)                                         ' add to the list of COM ports
             Catch ex As Exception
                 Console.WriteLine("serial port open fail {0}", SerialPort1.PortName)
             End Try
         Next
+
+
         Console.WriteLine(" {0} COM ports found - select from COM ports menu", PortToolStripMenuItem.DropDownItems.Count)
-        TextBox1.AppendText(String.Format(" {0} COM ports found - select from COM ports menu", PortToolStripMenuItem.DropDownItems.Count) + vbNewLine)
+        TextBox1.AppendText(String.Format(vbNewLine + " {0} COM ports found - select from COM ports menu",
+                                           PortToolStripMenuItem.DropDownItems.Count) + vbNewLine)
         ' if no COM ports were found display message
         If PortToolStripMenuItem.DropDownItems.Count = 0 Then
-            TextBox1.AppendText("No COM ports found" + vbNewLine)
+            TextBox1.AppendText(vbNewLine + "No COM ports found" + vbNewLine)
         End If
 
     End Sub
